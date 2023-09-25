@@ -6,6 +6,12 @@ R code to estimate modle parameters of stochastic differential usind the Stochas
  3) The delta approximation method for random beta case 
  4) The delta approximation method both alpha and beta random
 
+These codes are the support codes for the papers cited in References. 
+- Model 1) follows equation (8) of reference [1].
+- Model 2) follows equation (24) of reference [3].
+- Model 3) follows equation (38) of reference [3].
+- Model 4) follows equation (18) of reference [1].
+
 # Instrucions for running the code
 
 1) Run the R function DA_method_function.R
@@ -25,8 +31,11 @@ Notes about the starting parameter values for the minimization:
                                      s - sigma (the diffusion coefficient assumed fixed
  - If random=0 use c(a,b,s). if random=1 use c(a,t,b,s). if random=11 use c(a,b,o,s). if random=2 use c(a,t,b,o,s).  
 
+# Example
+We propose an data file for example. The file have simulated information of weigth of 20 animals, taken at different time instants.
+
 
 # References
- - Jamba NT, Jacinto G, Filipe PA, Braumann CA. Likelihood Function through the Delta Approximation in Mixed SDE Models. Mathematics. 2022; 10(3):385. https://doi.org/10.3390/math10030385
- - Jamba NT, Jacinto G, Filipe PA, Braumann CA. Stochastic differential equations mixed model for individual growth with the inclusion of genetic characteristics. Submited.
- - Jamba NT, Filipe PA, Jacinto G,  Braumann CA. Estimation for stochastic differential equations mixed models using approximation methods. Submited.
+ - [1] Jamba NT, Jacinto G, Filipe PA, Braumann CA. Likelihood Function through the Delta Approximation in Mixed SDE Models. Mathematics. 2022; 10(3):385. https://doi.org/10.3390/math10030385
+ - [2] Jamba NT, Jacinto G, Filipe PA, Braumann CA. Stochastic differential equations mixed model for individual growth with the inclusion of genetic characteristics. Submited.
+ - [3] Jamba NT, Filipe PA, Jacinto G,  Braumann CA. Estimation for stochastic differential equations mixed models using approximation methods. Submited.
