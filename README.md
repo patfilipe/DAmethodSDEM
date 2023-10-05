@@ -19,7 +19,7 @@ These codes are the support codes for the papers cited in References.
 where:
 - Mat_Time - matrix of m observation times. Each column represents the observation time of an individual.
 - Mat_Obs - matrix of m trajectories. Each column represents  the observations of an individual.
-  Notes: Mat_Time and Mat_Obs must have the same dimensions. If different animals had different observation times, the remain column observations have NA 
+  Notes: Mat_Time and Mat_Obs must have the same dimensions. If different animals had different observation times,  the remain observations of a given column should have NA.
 
 - random  - the random effects in the drift. If random=0, no random effects. If random=1,  a random effect on alpha
                                            If random=11,  a random effect on beta. If random=2,  a random effect on both alpha and beta
@@ -32,7 +32,7 @@ Notes about the starting parameter values for the minimization:
  - If random=0 use c(a,b,s). if random=1 use c(a,t,b,s). if random=11 use c(a,b,o,s). if random=2 use c(a,t,b,o,s).  
 
 # Example
-We propose an data file for example. The file have simulated information of weigth of 20 animals, taken at different time instants.
+We propose an data file for example. The file have simulated information of weigth of 30 animals, taken at different time instants.
 
 
 # References
