@@ -1,6 +1,6 @@
-# Estimation of Stochatic Differential Equations mixed models using the Delta method approximaion
+# Estimation of Stochastic Differential Equations mixed models using the Delta method approximation
 
-R code to estimate modle parameters of stochastic differential usind the Stochastic Gompertz model. The method is able to estimates the cases:
+R code to estimate model parameters of the Stochastic Gompertz model, considering:
  1) The fixed effects closed formula
  2) The delta approximation method for random alpha case
  3) The delta approximation method for random beta case 
@@ -12,13 +12,13 @@ These codes are the support codes for the papers cited in References.
 - Model 3) follows equation (38) of reference [3].
 - Model 4) follows equation (18) of reference [1].
 
-# Instrucions for running the code
+# Instructions for running the code
 
 1) Run the R function DA_method_function.R
 2) The function has the inputs Da.fit(Mat_Time, Mat_Obs,  random, c(a,t,b,o,s))
 where:
-- Mat_Time - matrix of m observation times. Each column represents the observation time of an individual.
-- Mat_Obs - matrix of m trajectories. Each column represents  the observations of an individual.
+- Mat_Time - matrix of m observation time instants. Each column represents the observation time instants of an individual.
+- Mat_Obs - matrix of m individual growth measure. Each column represents  the observations of an individual.
   Notes: Mat_Time and Mat_Obs must have the same dimensions. If different animals had different observation times,  the remain observations of a given column should have NA.
 
 - random  - the random effects in the drift. If random=0, no random effects. If random=1,  a random effect on alpha
@@ -32,7 +32,7 @@ Notes about the starting parameter values for the minimization:
  - If random=0 use c(a,b,s). if random=1 use c(a,t,b,s). if random=11 use c(a,b,o,s). if random=2 use c(a,t,b,o,s).  
 
 # Example
-We propose an data file for example. The file have simulated information of weigth of 30 animals, taken at different time instants.
+We propose a data file for example. The file have simulated information on the weigth of 30 animals, taken at different age instants.
 
 
 # References
