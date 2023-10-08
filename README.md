@@ -1,4 +1,4 @@
-# Estimation of Stochastic Differential Equations mixed models using the Delta method approximation
+# Estimation of Stochastic Differential Equations mixed models using the Delta approximation method
 
 R code to estimate model parameters of the Stochastic Gompertz model, considering:
  1) The fixed effects closed formula
@@ -6,7 +6,7 @@ R code to estimate model parameters of the Stochastic Gompertz model, considerin
  3) The delta approximation method for random beta case 
  4) The delta approximation method both alpha and beta random
 
-These codes are the support codes for the papers cited in References. 
+These codes are the support codes for the papers in the References [1] and [3]. 
 - Model 1) follows equation (8) of reference [1].
 - Model 2) follows equation (24) of reference [3].
 - Model 3) follows equation (38) of reference [3].
@@ -19,7 +19,7 @@ These codes are the support codes for the papers cited in References.
 where:
 - Mat_Time - matrix of m observation time instants. Each column represents the observation time instants of an individual.
 - Mat_Obs - matrix of m individual growth measure. Each column represents  the observations of an individual.
-  Notes: Mat_Time and Mat_Obs must have the same dimensions. If different animals had different observation times,  the remain observations of a given column should have NA.
+  Notes: Mat_Time and Mat_Obs must have the same dimensions. If different animals have different observation times,  the remain observations of a given column should have NA.
 
 - random  - the random effects in the drift. If random=0, no random effects. If random=1,  a random effect on alpha
                                            If random=11,  a random effect on beta. If random=2,  a random effect on both alpha and beta
