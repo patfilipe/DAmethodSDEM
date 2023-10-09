@@ -37,9 +37,13 @@ We propose example data files:
 1) for example with simulated weights of 100 animals mertolengo cattles males, taken at different age instants use the files Mat_Time_100_real.csv and Mat_Obs_100_real.csv.
 2) for example with simulated weights of 100 animals mertolengo cattles males, taken at same age instants use the files Mat_Time_100_sim.csv and Mat_Obs_100_simcsv.
 3) In both datasets, the initial starting points are the same:
+   
    a) For the fixed effects run the code and the function: DA.fit(I, P,  0, c(6.3,1.3,0.3))
+   
    b) For the random alpha case run the code and the function: DA.fit(I, P,  1, c(6.5,0.13,1.11,0.28))
+   
    c) For the random beta case run the code and the function:  DA.fit(I, P,  11, c(6.59205,1.30,0.1835, 0.30))
+   
    d) For both alpha and beta random case run the code and the function:   DA.fit(I, P,  2, c(6.5,0.001,1.3,0.1, 0.3))
 
 
