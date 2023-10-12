@@ -10,7 +10,7 @@
 
 
 ## Usage
-# Da.fit(Mat_Time, Mat_Obs,  random, c(a,t,b,o,s))
+# DA.fit(Mat_Time, Mat_Obs,  random, c(a,t,b,o,s))
 
 ## Mat_Time - matrix of m observation times. Each column represents the observation time of an individual.  
 ## Mat_Obs - matrix of m trajectories. Each column represents  the observations of an individual. 
@@ -25,7 +25,8 @@
 ## If random=0 use c(a,b,s). if random=1 use c(a,t,b,s). if random=11 use c(a,b,o,s). if random=2 use c(a,t,b,o,s).    
 
 
-Da.fit <- function(I,P,rnd, y) {
+DA.fit <- function(I,P,rnd, y) {
+  library("numDeriv")
   
   d <- dim(I)  # Matrix dimension 'D';
   n <- d[2]  # Number of animals;
@@ -49,7 +50,7 @@ Da.fit <- function(I,P,rnd, y) {
     else {
       # - Likelihood function
       L<-function(I1,I2,P1,P2,N,x){
-        -(-sum(P2)-(N/2)*log(2*pi)-(N/2)*log(x[3]^2/(2*x[2]))-
+        -(-(N/2)*log(2*pi)-(N/2)*log(x[3]^2/(2*x[2]))-
             (1/2)*(sum(log(1-(exp(-x[2]*(I2-I1)))^2)))-
             (x[2]/(x[3]^2))*(sum((P2-x[1]-(P1-x[1])*(exp(-x[2]*(I2-I1))))^2/(1-(exp(-x[2]*(I2-I1)))^2))))
       }
@@ -66,27 +67,26 @@ Da.fit <- function(I,P,rnd, y) {
       mLTG<-nlm(LTG,c(y[1],y[2],y[3]),hessian=TRUE)
       uG <- mLTG$estimate[1]
       UG <- exp(uG)
-      bG <- mLTG$estimate[2]
+      lG <- mLTG$estimate[2]
       sG <- abs(mLTG$estimate[3])
       
       # - Empirical Fisher information matrix; Inverse of the Hessian LT at point (a,b1,b2,s)
       vhG<-solve(mLTG$hessian)
       MEuG <- sqrt(vhG[1,1])
       MEUG <- sqrt(vhG[1,1])*exp(uG)
-      MEbG <- sqrt(vhG[2,2])
+      MElG <- sqrt(vhG[2,2])
       MEsG <- sqrt(vhG[3,3])
       
-      print(paste("SDE with fixed effects estimators"))
-      print(paste("alpha", round(uG,4), "theta", 0))
-      print(paste("beta", round(bG,4), "omega", 0))
-      print(paste("sigma", round(sG,4)))
-      
-      print(paste("Std. Dev. form Inverse of the empirical Fisher information matrix"))
-      print(paste("alpha", round(MEuG,4), "theta", 0))
-      print(paste("beta", round(MEbG,4), "omega", 0))
-      print(paste(round(MEsG,4)))
-      
-      print(paste("Maximum of the likelihood function:", round(- mLTG$minimum,4)))
+      print(paste("SDE with fixed effects estimates"))
+      print(paste("alpha", round(uG,5)))
+      print(paste("beta", round(lG,5)))
+      print(paste("sigma", round(sG,5)))
+      print(paste("____"))
+      print(paste("Standard deviation estimate from the empirical Fisher information matrix"))
+      print(paste("alpha", round(MEuG,5)))
+      print(paste("beta", round(MElG,5)))
+      print(paste("sigma",round(MEsG,5)))
+
     }
     
     
@@ -107,7 +107,7 @@ Da.fit <- function(I,P,rnd, y) {
         f <- (-1/2)*sum((P2 - x[1] - (P1 - x[1])*(exp(- x[3]*(I2 - I1))))^2/((x[4]^2/(2*x[3]))*(1 - (exp(- x[3]*(I2 - I1)))^2)))
         f1 <- (sum((1 - (exp(- x[3]*(I2 - I1))))*(P2 - x[1] - (P1 - x[1])*(exp(- x[3]*(I2 - I1))))/((x[4]^2/(2*x[3]))*(1 - (exp(- x[3]*(I2 - I1)))^2))))
         f2 <- (- sum((1 - (exp(- x[3]*(I2 - I1))))^2/((x[4]^2/(2*x[3]))*(1 - (exp(- x[3]*(I2 - I1)))^2))))
-        MV <- -(- sum(P2) + (-1/2)*sum(log(2*pi*((x[4]^2/(2*x[3]))*(1 - (exp(- x[3]*(I2 - I1)))^2)))) + f + log(1 + (1/2)*(x[2]^2*(f2 + (f1)^2))))
+        MV <- -((-1/2)*sum(log(2*pi*((x[4]^2/(2*x[3]))*(1 - (exp(- x[3]*(I2 - I1)))^2)))) + f + log(1 + (1/2)*(x[2]^2*(f2 + (f1)^2))))
         MV}
       
       
@@ -118,34 +118,32 @@ Da.fit <- function(I,P,rnd, y) {
         }
         return(LTG)
       }
-      #LTG is the  symmetric of the likelihood function and nlm (or nlminb) minimizes symmetric of the likelihood function. 
+      #LTG is the  symmetric of the likelihood function and nlm (or nlminb) minimizes symmetric of the likelihood function.
       mLTG<-nlm(LTG,c(y[1],y[2],y[3], y[4]),hessian=TRUE)
-      
+
       uG <- mLTG$estimate[1]
       UG <- exp(uG)
       tG <- mLTG$estimate[2]
-      bG <- mLTG$estimate[3]
+      lG <- mLTG$estimate[3]
       sG <- abs(mLTG$estimate[4])
-      
+
       # - Empirical Fisher information matrix; Inverse of the Hessian LT at point (a,b1,b2,s)
       vhG<-solve(mLTG$hessian)
       MEuG <- sqrt(vhG[1,1])
       MEUG <- sqrt(vhG[1,1])*exp(uG)
       MEtG <- sqrt(vhG[2,2])
-      MEbG <- sqrt(vhG[3,3])
+      MElG <- sqrt(vhG[3,3])
       MEsG <- sqrt(vhG[4,4])
-      
-      print(paste("SDE with random effect on alpha estimators"))
-      print(paste("alpha", round(uG,4), "theta", round(tG,4)))
-      print(paste("beta", round(bG,4), "omega", 0))
-      print(paste("sigma", round(sG,4)))
-      
-      print(paste("Std. Dev. form Inverse of the empirical Fisher information matrix"))
-      print(paste("alpha", round(MEuG,4), "theta", round(MEtG,4)))
-      print(paste("beta", round(MEbG,4), "omega", 0))
-      print(paste(round(MEsG,4)))
-      
-      print(paste("Maximum of the likelihood function:", round(- mLTG$minimum,4)))
+
+      print(paste("SDE with random effect on alpha estimates"))
+      print(paste("mu", round(uG,5), "theta", round(tG,5)))
+      print(paste("beta", round(lG,5)))
+      print(paste("sigma", round(sG,5)))
+      print(paste("___"))
+      print(paste("Standard deviation estimate from the empirical Fisher information matrix"))
+      print(paste("mu", round(MEuG,5), "theta", round(MEtG,5)))
+      print(paste("beta", round(MElG,5)))
+      print(paste("sigma",round(MEsG,5)))
     }
     
   }
@@ -160,23 +158,27 @@ Da.fit <- function(I,P,rnd, y) {
     }
     else {
       # - Likelihood function
-      LG <-function(I1,I2,P1,P2,N,x){
+      LG<-function(I1,I2,P1,P2,N,x){
+        
         f <- (-1/2)*sum((P2 - x[1] - (P1 - x[1])*(exp(- x[2]*(I2 - I1))))^2/(((x[4]^2)/(2*x[2]))*(1 - (exp(- x[2]*(I2 - I1)))^2)) + log(2*pi*(((x[4]^2)/(2*x[2]))*(1 - (exp(- x[2]*(I2 - I1)))^2))))
+        
         f1 <- (sum(((I1 - I2)*(P1 - x[1])*(exp(- x[2]*(I2 - I1)))*(P2 - x[1] - (P1 - x[1])*(exp(- x[2]*(I2 - I1)))))/(((x[4]^2)/(2*x[2]))*(1 - (exp(- x[2]*(I2 - I1)))^2))) -
                  sum((P2 - x[1] - (P1 - x[1])*(exp(- x[2]*(I2 - I1))))^2/(x[4]^2*(1 - (exp(- x[2]*(I2 - I1)))^2))) +
                  2*sum(((P2 - x[1] - (P1 - x[1])*(exp(- x[2]*(I2 - I1))))^2*(I2 - I1)*(exp(- x[2]*(I2 - I1)))^2)/(((x[4]^2)/(x[2]))*(1 - (exp(- x[2]*(I2 - I1)))^2)^2)) +
                  N/(2*x[2]) - sum(((I2 - I1)*(exp(- x[2]*(I2 - I1)))^2)/(1 - (exp(- x[2]*(I2 - I1)))^2)))
-        f2 <- (sum(((I2 - I1)^2*(P1 - x[1])*(exp(- x[2]*(I2 - I1)))*(P2 - x[1] - (P1 - x[1])*(exp(- x[2]*(I2 - I1)))))/(((x[4]^2)/(2*x[2]))*(1 - (exp(- x[2]*(I2 - I1)))^2))) -
-                 sum(((I2 - I1)^2*(P1 - x[1])^2*(exp(- x[2]*(I2 - I1)))^2)/(((x[4]^2)/(2*x[2]))*(1 - (exp(- x[2]*(I2 - I1)))^2))) - 
+        
+        f2 <- (2*sum(((I2 - I1)^2*(P1 - x[1])*(exp(- x[2]*(I2 - I1)))*(P2 - x[1] - (P1 - x[1])*(exp(- x[2]*(I2 - I1)))))/(((x[4]^2)/(x[2]))*(1 - (exp(- x[2]*(I2 - I1)))^2))) -
+                 2*sum(((I2 - I1)^2*(P1 - x[1])^2*(exp(- x[2]*(I2 - I1)))^2)/(((x[4]^2)/(x[2]))*(1 - (exp(- x[2]*(I2 - I1)))^2))) -
                  4*sum(((I2 - I1)*(P1 - x[1])*(exp(- x[2]*(I2 - I1)))*(P2 - x[1] - (P1 - x[1])*(exp(- x[2]*(I2 - I1)))))/(x[4]^2*(1 - (exp(- x[2]*(I2 - I1)))^2))) +
-                 4*sum(((I2 - I1)^2*(P1 - x[1])*(exp(- x[2]*(I2 - I1)))^3*(P2 - x[1] - (P1 - x[1])*(exp(- x[2]*(I2 - I1)))))/(((x[4]^2)/(2*x[2]))*(1 - (exp(- x[2]*(I2 - I1)))^2))) +
+                 8*sum(((I2 - I1)^2*(P1 - x[1])*(exp(- x[2]*(I2 - I1)))^3*(P2 - x[1] - (P1 - x[1])*(exp(- x[2]*(I2 - I1)))))/(((x[4]^2)/(x[2]))*(1 - (exp(- x[2]*(I2 - I1)))^2)^2)) +
                  4*sum(((I2 - I1)*(exp(- x[2]*(I2 - I1)))^2*(P2 - x[1] - (P1 - x[1])*(exp(- x[2]*(I2 - I1))))^2)/(x[4]^2*(1 - (exp(- x[2]*(I2 - I1)))^2)^2)) -
                  4*sum(((I2 - I1)^2*(exp(- x[2]*(I2 - I1)))^2*(P2 - x[1] - (P1 - x[1])*(exp(- x[2]*(I2 - I1))))^2)/((x[4]^2/x[2])*(1 - (exp(- x[2]*(I2 - I1)))^2)^2)) -
                  8*sum(((I2 - I1)^2*(exp(- x[2]*(I2 - I1)))^4*(P2 - x[1] - (P1 - x[1])*(exp(- x[2]*(I2 - I1))))^2)/((x[4]^2/x[2])*(1 - (exp(- x[2]*(I2 - I1)))^2)^3)) +
                  2*sum(((I2 - I1)^2*(exp(- x[2]*(I2 - I1)))^4)/(1 - (exp(- x[2]*(I2 - I1)))^2)^2) +
                  2*sum(((I2 - I1)^2*(exp(- x[2]*(I2 - I1)))^2)/(1 - (exp(- x[2]*(I2 - I1)))^2)) -
                  N/(2*x[2]^2))
-        MV <- -(- sum(P2) + f + log(1 + (1/2)*x[3]^2*(f2 + (f1)^2)))
+        
+        MV<- - ( f + log(1 + (1/2)*(x[3]^2)*(f2 + (f1)^2)))
         MV}
       
       LTG <- function(x){
@@ -187,36 +189,35 @@ Da.fit <- function(I,P,rnd, y) {
         return(LTG)
       }
       
-      #LTG is the  symmetric of the likelihood function and nlm (or nlminb) minimizes symmetric of the likelihood function. 
+      #LTG is the  symmetric of the likelihood function and nlm (or nlminb) minimizes symmetric of the likelihood function.
       mLTG <- nlm(LTG,c(y[1],y[2],y[3], y[4]),hessian=TRUE)
-      
-      aG <- mLTG$estimate[1]
-      AG <- exp(aG)
+
+      uG <- mLTG$estimate[1]
+      UG <- exp(uG)
       lG <- mLTG$estimate[2]
       oG <- mLTG$estimate[3]
       sG <- abs(mLTG$estimate[4])
-      
+
       # - Empirical Fisher information matrix; Inverse of the Hessian LT at point (a,b1,b2,s)
       vhG<-solve(mLTG$hessian)
-      
-      MEaG <- sqrt(vhG[1,1])
-      MEAG <- sqrt(vhG[1,1])*AG
+
+      MEuG <- sqrt(vhG[1,1])
+      MEUG <- sqrt(vhG[1,1])*exp(uG)
       MElG <- sqrt(vhG[2,2])
       MEoG <- sqrt(vhG[3,3])
       MEsG <- sqrt(vhG[4,4])
-      
-      
-      print(paste("SDE with random effect on beta estimators"))
-      print(paste("alpha", round(uG,4), "theta", 0))
-      print(paste("beta", round(bG,4), "omega", round(oG,4)))
-      print(paste("sigma", round(sG,4)))
-      
-      print(paste("Std. Dev. form Inverse of the empirical Fisher information matrix"))
-      print(paste("alpha", round(MEuG,4), "theta", 0))
-      print(paste("beta", round(MEbG,4), "omega", round(MEoG,4)))
-      print(paste(round(MEsG,4)))
-      
-      print(paste("Maximum of the likelihood function:", round(- mLTG$minimum,4)))
+
+
+      print(paste("SDE with random effect on beta estimates"))
+      print(paste("alpha", round(uG,5) ))
+      print(paste("lambda", round(lG,5), "omega", round(oG,5)))
+      print(paste("sigma", round(sG,5)))
+      print(paste("___"))
+      print(paste("Standard deviation estimate from the empirical Fisher information matrix"))
+      print(paste("alpha", round(MEuG,5)))
+      print(paste("lambda", round(MElG,5), "omega", round(MEoG,5)))
+      print(paste("sigma",round(MEsG,5)))
+
     }
     
     
@@ -253,7 +254,7 @@ Da.fit <- function(I,P,rnd, y) {
                   2*sum(((I2-I1)^2*(exp(-x[3]*(I2-I1)))^2)/(1-(exp(-x[3]*(I2-I1)))^2)) - N/(2*x[3]^2))
         MV <- -(-sum(P2)+f+log(1+(x[2]^2/2)*(fa2+(fa1)^2)+(x[4]^2/2)*(fb2+(fb1)^2)))
         MV}
-      
+      # - Sum of likelihood functions
       LTG<-function(x){
         LTG<-0
         for (k in 1:n) {
@@ -262,35 +263,34 @@ Da.fit <- function(I,P,rnd, y) {
         return(LTG)
       }
       
-      #LTG is the  symmetric of the likelihood function and nlm (or nlminb) minimizes symmetric of the likelihood function. 
+      #LTG is the  symmetric of the likelihood function and nlm (or nlminb) minimizes symmetric of the likelihood function.
       mLTG <- nlm(LTG,c(y[1],y[2],y[3], y[4],y[5]),hessian=TRUE)
-      # - Parameter estimates;
-      AG <- exp(uG)
+      uG <- mLTG$estimate[1]
+      UG <- exp(uG)
       tG <- mLTG$estimate[2]
       lG <- mLTG$estimate[3]
       oG <- mLTG$estimate[4]
       sG <- abs(mLTG$estimate[5])
-      
+
       # - Empirical Fisher information matrix; Inverse of the Hessian LT at point (a,b1,b2,s)
       vhG<-solve(mLTG$hessian)
-      
-      MEAG <- sqrt(vhG[1,1])*exp(uG)
+      MEuG <- sqrt(vhG[1,1])
+      MEUG <- sqrt(vhG[1,1])*exp(uG)
       MEtG <- sqrt(vhG[2,2])
       MElG <- sqrt(vhG[3,3])
       MEoG <- sqrt(vhG[4,4])
       MEsG <- sqrt(vhG[5,5])
-      
-      print(paste("SDE with random effect on alpha and beta estimators"))
-      print(paste("alpha", round(uG,4), "theta", round(tG,4)))
-      print(paste("beta", round(bG,4), "omega", round(oG,4)))
-      print(paste("sigma", round(sG,4)))
-      
-      print(paste("Std. Dev. form Inverse of the empirical Fisher information matrix"))
-      print(paste("alpha", round(MEuG,4), "theta", round(MEtG,4)))
-      print(paste("beta", round(MEbG,4), "omega", round(MEoG,4)))
-      print(paste(round(MEsG,4)))
-      
-      print(paste("Maximum of the likelihood function:", round(- mLTG$minimum,4)))
+
+      print(paste("SDE with random effect on alpha and beta estimates"))
+      print(paste("mu", round(uG,5), "theta", round(tG,5)))
+      print(paste("lambda", round(lG,5), "omega", round(oG,5)))
+      print(paste("sigma", round(sG,5)))
+      print(paste("___"))
+      print(paste("Standard deviation estimate from the empirical Fisher information matrix"))
+      print(paste("mu", round(MEuG,5), "theta", round(MEtG,5)))
+      print(paste("lambda", round(MElG,5), "omega", round(MEoG,5)))
+      print(paste("sigma",round(MEsG,5)))
+
     }
     
   }
