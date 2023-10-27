@@ -1,5 +1,5 @@
 ##----------------------------------------------------------##----------------------------------------------------------##7
-##  Inference on stochastic differential the Stochastic Gompertz model:
+##  Inference on stochastic differential equations Gompertz model:
 ## 1) The fixed effects closed formula
 ## 2) The delta approximation method for random alpha case
 ## 3) The delta approximation method for random beta case 
